@@ -6,13 +6,19 @@ Hopfield Networks are a type of recurrent neural network (RNN) under the topic o
 
 We aim uncover the mathematics behind Hopfield Networks, and present a working set of codes that can be found in this <a href = "https://github.com/DenseLance/hopfield-networks">Github repository</a>.
 
+#### Required libraries
+
+- <a href = "https://pypi.org/project/numpy/">numpy</a>
+- <a href = "https://pypi.org/project/matplotlib/">matplotlib</a>
+- <a href = "https://pypi.org/project/Pillow/">PIL</a>
+
 ### Classical Hopfield Networks
 
 In this section, we will focus on the main use of Hopfield Networks — image restoration. Solving optimization problems is another major application of Hopfield network. In our case, we train the Hopfield Network by feeding it with correct images (ground truth) and attempt to recover said images from the network by using only corrupted versions of them as input.
 
 #### Image processing
 
-The image used for both training and testing has to be processed for it to be a valid input of a Hopfield Network. To convert the image to state $\boldsymbol{x}$ that the model understands, the image has to be bilevel (binary). In our case, we would use polar values for the image where $\boldsymbol{x} \in \{-1,1\}^d$ instead of binary values, noting that $\boldsymbol{d} = width \cdot height$. Next, the image is transformed to an array-like structure and flattened to become 1-dimensional. The following code shows how this is done in Python, assuming `type(image) = PIL.Image`.
+The image used for both training and testing has to be processed for it to be a valid input of a Hopfield Network. To convert the image to state $\boldsymbol{x}$ that the model understands, the image has to be bilevel (binary). In our case, we would use polar values for the image where $\boldsymbol{x} \in \\{-1,1\\}^d$ instead of binary values, noting that $\boldsymbol{d} = width \cdot height$. Next, the image is transformed to an array-like structure and flattened to become 1-dimensional. The following code shows how this is done in Python, assuming `type(image) = PIL.Image`.
 
 ```python
 states = np.asarray(image.convert("1"))  # converting to black and white image
@@ -38,19 +44,28 @@ previous_weights += weights
 
 #### Recovering the image
 
-There are two ways in which we can recover the states from Classical Hopfield Networks: synchronous and asynchronous. We would use the synchronous update rule which is more straightforward.
+There are two ways in which we can recover the states from Classical Hopfield Networks: synchronous and asynchronous.
 
-By allowing $\boldsymbol{\theta}$ to be the list of threshold values and $\boldsymbol{x^\prime}$ to be the corrupted image we input into the network, we can recover our image (state) $\hat{\boldsymbol{x}}$ as:
+For the synchronous update rule, it is more straightforward as all values in the state matrix are recovered at the same time. By allowing $\boldsymbol{\theta}$ to be the list of threshold values and $\boldsymbol{x^\prime}$ to be the corrupted image we input into the network, we can recover our image (state) $\hat{\boldsymbol{x}}$ as:
 
-$$\begin{align} sgn(\hat{\boldsymbol{x}_i}) = \begin{cases} +1 \qquad if \quad \sum\limits_{j = 1}^{d}(\boldsymbol{W}_{ij} \cdot \boldsymbol{x^\prime}_i) \ge \boldsymbol{\theta}_i \newline -1 \qquad if \quad \sum\limits_{j = 1}^{d}(\boldsymbol{W}_{ij} \cdot \boldsymbol{x^\prime}_i) < \boldsymbol{\theta}_i \end{cases} \end{align}$$
+$$\begin{align} sgn(\hat{\boldsymbol{x}_i}) = \begin{cases} +1 \qquad if \quad \sum\limits_{j = 1}^{d}(\boldsymbol{W}_{ij} \cdot \boldsymbol{x^\prime}_j) \ge \boldsymbol{\theta}_i \newline -1 \qquad if \quad \sum\limits_{j = 1}^{d}(\boldsymbol{W}_{ij} \cdot \boldsymbol{x^\prime}_j) < \boldsymbol{\theta}_i \end{cases} \end{align}$$
 
-Codewise, it would look like this:
+Codewise it would look like this, where we note that the values of our states should be converted back to polar:
 
 ```python
-predicted_states = np.matmul(weights, input_states) >= threshold
+predicted_states = (np.matmul(weights, states) >= threshold) * 2 - 1
 ```
 
-#### Example
+On the other hand, the asynchronous update rule would take a longer time to converge, as it attempts to recover values in the state matrix one at a time and at random. While it is less efficient, it is often more accurate when retrieving stored information from the Hopfield Network than its synchronous counterpart. Using the above formula from the synchronous update rule, our code can be translated to be as such:
+
+```python
+predicted_states = states.copy()
+for _ in range(number_of_iterations):
+    index = np.random.randint(0, len(weights))
+    predicted_states[index] = (np.matmul(weights[index], predicted_states) >= threshold[index]) * 2 - 1
+```
+
+#### Example using synchronous update rule
 
 This section can be found in the <i>Classical Hopfield Network.ipynb</i> file.
 
@@ -58,7 +73,7 @@ To give an example, we use the 5 images below from the MNIST fashion dataset to 
 
 <p align = "center"><img src="images/dataset.png" alt="alt text"/></p>
 
-We then attempt to restore all images by retrieving it from the Hopfield Network, using the uncorrupted original images as input. In this particular set of data, we managed to restore all of the images with 100% accuracy, which meant that the network was still able to distinguish between the 5 images.
+We then attempt to restore all images by retrieving it from the Hopfield Network, using the uncorrupted original images as input. In this particular set of data, we managed to restore all of the images with 100% accuracy using the synchronous update rule, which meant that the network was still able to distinguish between the 5 images.
 
 <p align = "center"><img src="images/test1_1.png" alt="alt text"/></p>
 
@@ -101,4 +116,4 @@ If the number of patterns stored is a lot lower than the storage capacity, then 
 ### Future Work
 
 - [ ] Code for Modern Hopfield Networks (aka Dense Associative Memories), as described <a href = "https://arxiv.org/abs/1606.01164">here</a>, <a  href = "https://arxiv.org/abs/1702.01929">here</a> and <a href = "https://arxiv.org/abs/2008.02217">here</a>.
-- [ ] Solving the Travelling Salesman Problem using Hopfield Networks.
+- [ ] Solving the Travelling Salesman Problem (or other NP-hard problems) using Hopfield Networks.
