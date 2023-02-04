@@ -11,6 +11,8 @@ We aim uncover the mathematics behind Hopfield Networks, and present a working s
 - <a href = "https://pypi.org/project/numpy/">numpy</a>
 - <a href = "https://pypi.org/project/matplotlib/">matplotlib</a>
 - <a href = "https://pypi.org/project/Pillow/">PIL</a>
+- <a href = "https://pypi.org/project/pandas/">pandas</a> (for Modified Hopfield Networks)
+- <a href = "https://pypi.org/project/tqdm/">tqdm</a> (for Modified Hopfield Networks)
 
 ### Classical Hopfield Networks
 
