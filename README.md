@@ -118,4 +118,4 @@ If the number of patterns stored is a lot lower than the storage capacity, then 
 ### Future Work
 
 - [ ] Code for Modern Hopfield Networks (aka Dense Associative Memories), as described <a href = "https://arxiv.org/abs/1606.01164">here</a>, <a  href = "https://arxiv.org/abs/1702.01929">here</a> and <a href = "https://arxiv.org/abs/2008.02217">here</a>.
-- [ ] Solving the Travelling Salesman Problem (or other NP-hard problems) using Hopfield Networks.
+- [x] Solving the Travelling Salesman Problem (or other NP-hard problems) using Hopfield Networks.
