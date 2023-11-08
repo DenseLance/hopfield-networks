@@ -50,7 +50,7 @@ There are two ways in which we can recover the states from Classical Hopfield Ne
 
 For the synchronous update rule, it is more straightforward as all values in the state matrix are recovered at the same time. By allowing $\boldsymbol{\theta}$ to be the list of threshold values and $\boldsymbol{x^\prime}$ to be the corrupted image we input into the network, we can recover our image (state) $\hat{\boldsymbol{x}}$ as:
 
-$\begin{align} sgn(\hat{\boldsymbol{x_i}}) = \begin{cases} +1 \qquad if \quad \sum\limits_{j = 1}^{d}(\boldsymbol{W}_{ij} \cdot \boldsymbol{x^\prime}j) \ge \boldsymbol{\theta}i \newline -1 \qquad if \quad \sum\limits_{j = 1}^{d}(\boldsymbol{W}{ij} \cdot \boldsymbol{x^\prime}_j) < \boldsymbol{\theta}_i \end{cases} \end{align}$
+$$$\begin{align} sgn(\hat{\boldsymbol{x_i}}) = \begin{cases} +1 \qquad if \quad \sum\limits_{j = 1}^{d}(\boldsymbol{W}_{ij} \cdot \boldsymbol{x^\prime}j) \ge \boldsymbol{\theta}i \newline -1 \qquad if \quad \sum\limits_{j = 1}^{d}(\boldsymbol{W}{ij} \cdot \boldsymbol{x^\prime}_j) < \boldsymbol{\theta}_i \end{cases} \end{align}$$$
 
 Codewise it would look like this, where we note that the values of our states should be converted back to polar:
 
